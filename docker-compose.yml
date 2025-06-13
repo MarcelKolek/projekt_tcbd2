@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=pomodoro_auth
+    volumes:
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 2s
+      retries: 5
+    ports:
+      - "5432:5432"
+
+  auth-service:
+    build: ./auth-service
+    environment:
+      - DB_HOST=postgres
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=pomodoro_auth
+      - JWT_SECRET=super-secret-key
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "4000:4000"
+
+  timer-service:
+    build: ./timer-service
+    environment:
+      - DB_HOST=postgres
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=pomodoro_timer
+      - JWT_SECRET=super-secret-key
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "4001:4001"
+
+  task-service:
+    build: ./task-service
+    environment:
+      - MONGO_HOST=mongo
+      - MONGO_PORT=27017
+      - MONGO_DB=pomodoro_tasks
+      - JWT_SECRET=super-secret-key
+    depends_on:
+      - mongo
+    ports:
+      - "4002:4002"
+
+  frontend:
+    build: ./frontend
+    environment:
+      - REACT_APP_API_URL=http://localhost:4000
+    ports:
+      - "3000:3000"
+
+  mongo:
+    image: mongo:6
+    ports:
+      - "27017:27017"
