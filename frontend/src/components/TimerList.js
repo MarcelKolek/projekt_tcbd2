@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import api from '../services/api';
+import { timerApi } from '../services/api';
 import authHeader from '../services/authHeader';
 
 function TimerList() {
@@ -11,18 +11,18 @@ function TimerList() {
   }, []);
 
   const fetchTimers = async () => {
-    const res = await api.get('/api/timers', { headers: authHeader() });
+    const res = await timerApi.get('/timers', { headers: authHeader() });
     setTimers(res.data);
   };
 
   const handleDelete = async (id) => {
-    await api.delete(`/api/timers/${id}`, { headers: authHeader() });
+    await timerApi.delete(`/timers/${id}`, { headers: authHeader() });
     fetchTimers();
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await api.post('/api/timers', newTimer, { headers: authHeader() });
+    await timerApi.post('/timers', newTimer, { headers: authHeader() });
     setNewTimer({ workTime:'', breakTime:'', cycles:'', description:'' });
     fetchTimers();
   };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import api from '../services/api';
+import { taskApi } from '../services/api';
 import authHeader from '../services/authHeader';
 
 function TasksManager() {
@@ -12,12 +12,12 @@ function TasksManager() {
   }, []);
 
   const fetchTasks = async () => {
-    const res = await api.get('/api/tasks', { headers: authHeader() });
+    const res = await taskApi.get('/tasks', { headers: authHeader() });
     setTasks(res.data);
   };
 
   const addTask = async () => {
-    await api.post('/api/tasks', { title, description }, { headers: authHeader() });
+    await taskApi.post('/tasks', { title, description }, { headers: authHeader() });
     setTitle(''); setDescription('');
     fetchTasks();
   };

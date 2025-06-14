@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import api from '../services/api';
+import { timerApi } from '../services/api';
 import authHeader from '../services/authHeader';
 
 function Stats() {
@@ -7,7 +7,7 @@ function Stats() {
 
   useEffect(() => {
     const fetchStats = async () => {
-      const res = await api.get('/api/sessions/stats', { headers: authHeader() });
+      const res = await timerApi.get('/sessions/stats', { headers: authHeader() });
       setStats(res.data);
     };
     fetchStats();

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import api from '../services/api';
+import { timerApi } from '../services/api';
 import authHeader from '../services/authHeader';
 
 function Session() {
@@ -8,13 +8,13 @@ function Session() {
   const [sessionId, setSessionId] = useState(null);
 
   const startSession = async () => {
-    const res = await api.post('/api/sessions', { timerId, taskId }, { headers: authHeader() });
+    const res = await timerApi.post('/sessions', { timerId, taskId }, { headers: authHeader() });
     setSessionId(res.data.id);
   };
 
   const stopSession = async () => {
     if (!sessionId) return;
-    await api.patch(`/api/sessions/${sessionId}`, { status: 'stopped' }, { headers: authHeader() });
+    await timerApi.patch(`/sessions/${sessionId}`, { status: 'stopped' }, { headers: authHeader() });
     setSessionId(null);
   };
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import api from '../services/api';
+import { taskApi } from '../services/api';
 import authHeader from '../services/authHeader';
 
 function TagsManager() {
@@ -11,12 +11,12 @@ function TagsManager() {
   }, []);
 
   const fetchTags = async () => {
-    const res = await api.get('/api/tags', { headers: authHeader() });
+    const res = await taskApi.get('/tags', { headers: authHeader() });
     setTags(res.data);
   };
 
   const addTag = async () => {
-    await api.post('/api/tags', { name }, { headers: authHeader() });
+    await taskApi.post('/tags', { name }, { headers: authHeader() });
     setName('');
     fetchTags();
   };

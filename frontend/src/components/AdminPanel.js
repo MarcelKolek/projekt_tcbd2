@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import api from '../services/api';
+import { authApi, timerApi } from '../services/api';
 import authHeader from '../services/authHeader';
 
 function AdminPanel() {
@@ -14,15 +14,15 @@ function AdminPanel() {
   }, []);
 
   const fetchUsers = async () => {
-    const res = await api.get('/api/auth/users', { headers: authHeader() });
+    const res = await authApi.get('/users', { headers: authHeader() });
     setUsers(res.data);
   };
   const fetchSessions = async () => {
-    const res = await api.get('/api/sessions', { headers: authHeader() });
+    const res = await timerApi.get('/sessions', { headers: authHeader() });
     setSessions(res.data);
   };
   const fetchTimers = async () => {
-    const res = await api.get('/api/timers', { headers: authHeader() });
+    const res = await timerApi.get('/timers', { headers: authHeader() });
     setTimers(res.data);
   };
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import api from '../services/api';
+import { authApi } from '../services/api';
 
 function Register() {
   const [username, setUsername] = useState('');
@@ -9,7 +9,7 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/api/auth/register', { username, password });
+      await authApi.post('/register', { username, password });
       setMessage('Registration successful!');
     } catch (err) {
       setMessage(err.response?.data?.message || 'Registration failed');

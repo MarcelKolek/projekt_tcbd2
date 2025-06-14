@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import api from '../services/api';
+import { authApi } from '../services/api';
 
 function Login({ onLogin }) {
   const [username, setUsername] = useState('');
@@ -10,7 +10,7 @@ function Login({ onLogin }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await api.post('/api/auth/login', { username, password });
+      const res = await authApi.post('/login', { username, password });
       const user = res.data;
       localStorage.setItem('user', JSON.stringify(user));
       onLogin(user);

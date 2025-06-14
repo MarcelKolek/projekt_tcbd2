@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import api from '../services/api';
+import { authApi } from '../services/api';
 import authHeader from '../services/authHeader';
 
 function Settings() {
@@ -10,7 +10,7 @@ function Settings() {
   }, []);
 
   const updatePrefs = async () => {
-    await api.put('/api/auth/preferences', prefs, { headers: authHeader() });
+    await authApi.put('/preferences', prefs, { headers: authHeader() });
     alert("Preferences updated");
   };
 
