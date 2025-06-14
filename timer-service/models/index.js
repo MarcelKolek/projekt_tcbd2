@@ -1,14 +1,23 @@
-const config = require("../config/db.config.js");
 const { Sequelize, DataTypes } = require("sequelize");
-const sequelize = new Sequelize(config.DB, config.USER, config.PASSWORD, {
-  host: config.HOST,
-  dialect: config.dialect
+const sequelize = new Sequelize(process.env.DB_URL || "sqlite::memory:");
+
+const Timer = sequelize.define("timer", {
+  id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
+  userId: DataTypes.INTEGER,
+  workTime: DataTypes.INTEGER,
+  breakTime: DataTypes.INTEGER,
+  cycles: DataTypes.INTEGER,
+  description: DataTypes.STRING,
+  status: { type: DataTypes.STRING, defaultValue: "active" }
 });
-const db = {};
-db.Sequelize = Sequelize;
-db.sequelize = sequelize;
-db.Timer = require("./timer.model.js")(sequelize, DataTypes);
-db.Session = require("./session.model.js")(sequelize, DataTypes);
-db.Timer.hasMany(db.Session, { as: "sessions", foreignKey: "timerId" });
-db.Session.belongsTo(db.Timer, { foreignKey: "timerId" });
-module.exports = db;
+const Session = sequelize.define("session", {
+  id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
+  timerId: DataTypes.INTEGER,
+  userId: DataTypes.INTEGER,
+  taskId: DataTypes.INTEGER,
+  status: DataTypes.STRING,
+  startTime: DataTypes.DATE,
+  endTime: DataTypes.DATE
+});
+
+module.exports = { sequelize, Timer, Session };

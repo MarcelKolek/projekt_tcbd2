@@ -2,11 +2,11 @@ const express = require("express");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const cors = require("cors");
-const mongoose = require("mongoose");
-const taskRoutes = require("./routes/task.routes.js");
-const tagRoutes = require("./routes/tag.routes.js");
-const errorHandler = require("./middleware/errorHandler.js");
-const dbConfig = require("./config/db.config.js");
+require("./models/index"); // mongoDB
+const taskRoutes = require("./routes/task.routes");
+const tagRoutes = require("./routes/tag.routes");
+const categoryRoutes = require("./routes/category.routes");
+const errorHandler = require("./middleware/errorHandler");
 
 const app = express();
 app.use(helmet());
@@ -18,13 +18,9 @@ app.use(rateLimit({
   message: "Too many requests"
 }));
 
-mongoose.connect(`mongodb://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}`, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-});
-
 app.use("/api/tasks", taskRoutes);
 app.use("/api/tags", tagRoutes);
+app.use("/api/categories", categoryRoutes);
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 4002;

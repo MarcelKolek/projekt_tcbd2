@@ -1,50 +1,40 @@
 import React, { useState } from 'react';
-import { register, login } from './services/auth.service';
-import { getTimers, createTimer } from './services/timer.service';
-import { getTasks } from './services/task.service';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import Login from './components/Login';
+import Register from './components/Register';
+import TimerList from './components/TimerList';
+import Session from './components/Session';
+import Stats from './components/Stats';
+import TagsManager from './components/TagsManager';
+import TasksManager from './components/TasksManager';
+import Settings from './components/Settings';
+import AdminPanel from './components/AdminPanel';
 
 function App() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [token, setToken] = useState("");
-  
-  const handleLogin = async () => {
-    try {
-      const res = await login(username, password);
-      setToken(res.data.accessToken);
-    } catch (err) {
-      console.error("Login failed", err);
-    }
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
+
+  const handleLogin = (usr) => {
+    setUser(usr);
   };
-  
-  const handleGetTimers = async () => {
-    const res = await getTimers(token, {});
-    console.log("Timers:", res.data);
-  };
-  
-  const handleGetTasks = async () => {
-    const res = await getTasks(token);
-    console.log("Tasks:", res.data);
-  };
-  
+
   return (
-    <div>
-      <h1>Pomodoro App</h1>
-      {!token ? (
-        <div>
-          <h2>Login</h2>
-          <input placeholder="Username" onChange={e => setUsername(e.target.value)} />
-          <input type="password" placeholder="Password" onChange={e => setPassword(e.target.value)} />
-          <button onClick={handleLogin}>Login</button>
-        </div>
-      ) : (
-        <div>
-          <h2>Dashboard</h2>
-          <button onClick={handleGetTimers}>Pobierz Timery</button>
-          <button onClick={handleGetTasks}>Pobierz Zadania</button>
-        </div>
-      )}
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/login" element={!user ? <Login onLogin={handleLogin}/> : <Navigate to="/"/>} />
+        <Route path="/register" element={<Register />} />
+        {user && <>
+          <Route path="/" element={<TimerList />} />
+          <Route path="/session" element={<Session />} />
+          <Route path="/stats" element={<Stats />} />
+          <Route path="/tags" element={<TagsManager />} />
+          <Route path="/tasks" element={<TasksManager />} />
+          <Route path="/settings" element={<Settings />} />
+          {user.role === 'admin' && <Route path="/admin" element={<AdminPanel />} />}
+        </>}
+        <Route path="*" element={<Navigate to={user ? "/" : "/login"} />} />
+      </Routes>
+    </Router>
   );
 }
+
 export default App;

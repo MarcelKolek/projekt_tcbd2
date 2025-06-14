@@ -39,7 +39,7 @@ exports.login = async (req, res, next) => {
       return res.status(401).send({ message: "Invalid Password!" });
     }
     const token = jwt.sign({ id: user.id, role: user.role }, config.secret, {
-      expiresIn: 86400 // 24 hours
+      expiresIn: 86400 // 24h
     });
     res.status(200).send({
       id: user.id,
@@ -47,6 +47,59 @@ exports.login = async (req, res, next) => {
       role: user.role,
       accessToken: token
     });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getAllUsers = async (req, res, next) => {
+  try {
+    const users = await User.findAll({ attributes: ['id','username','role','preferences'] });
+    res.status(200).send(users);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.updateUser = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const { role, preferences } = req.body;
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).send({ message: "User not found." });
+    }
+    if (role) user.role = role;
+    if (preferences) user.preferences = preferences;
+    await user.save();
+    res.status(200).send({ id: user.id, username: user.username, role: user.role });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.deleteUser = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const result = await User.destroy({ where: { id } });
+    if (!result) {
+      return res.status(404).send({ message: "User not found." });
+    }
+    res.status(204).send();
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.updatePreferences = async (req, res, next) => {
+  try {
+    const user = await User.findByPk(req.userId);
+    if (!user) {
+      return res.status(404).send({ message: "User not found." });
+    }
+    user.preferences = { ...user.preferences, ...req.body };
+    await user.save();
+    res.status(200).send(user.preferences);
   } catch (err) {
     next(err);
   }
