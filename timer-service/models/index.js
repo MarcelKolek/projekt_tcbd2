@@ -1,5 +1,12 @@
 const { Sequelize, DataTypes } = require("sequelize");
-const sequelize = new Sequelize(process.env.DB_URL || "sqlite::memory:");
+const config = require("../config/db.config.js");
+
+const sequelize = new Sequelize(
+  config.DB,
+  config.USER,
+  config.PASSWORD,
+  { host: config.HOST, dialect: config.dialect }
+);
 
 const Timer = sequelize.define("timer", {
   id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },

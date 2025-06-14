@@ -24,7 +24,6 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     indexes: [
-      { fields: ['username'] },
       { fields: ['role'] }
     ]
   });

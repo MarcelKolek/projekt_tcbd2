@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../services/api';
 
 function Login({ onLogin }) {
@@ -29,6 +30,12 @@ function Login({ onLogin }) {
           onChange={e => setPassword(e.target.value)} /><br/>
         <button type="submit">Log In</button>
       </form>
+      <p>
+       Don’t have an account?{' '}
+       <Link to="/register">
+         Register here
+       </Link>
+      </p>
     </div>
   );
 }
