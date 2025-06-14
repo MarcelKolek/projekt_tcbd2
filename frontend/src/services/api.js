@@ -1,8 +1,20 @@
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:4000";
+// const REACT_APP_TIMER_URL = "http://localhost:4001"
+// const REACT_APP_TASK_URL = "http://localhost:4002"
 
-export default axios.create({
-  baseURL: API_URL,
+
+export const authApi = axios.create({
+  baseURL: process.env.REACT_APP_AUTH_URL || "http://localhost:4000",
+  headers: { "Content-Type": "application/json" }
+});
+
+export const timerApi = axios.create({
+  baseURL: process.env.REACT_APP_TIMER_URL || "http://localhost:4001",
+  headers: { "Content-Type": "application/json" }
+});
+
+export const taskApi = axios.create({
+  baseURL: process.env.REACT_APP_TASK_URL || "http://localhost:4002",
   headers: { "Content-Type": "application/json" }
 });
