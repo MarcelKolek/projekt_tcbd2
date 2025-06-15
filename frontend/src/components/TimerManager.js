@@ -2,50 +2,53 @@ import React, { useState, useEffect } from 'react';
 import TagsManager from './TagsManager';
 import TimerList from './TimerList';
 import Session from './Session';
+import SessionStats from './SessionStats';
+import TasksManager from './TasksManager';
 import { taskApi, timerApi } from '../services/api';
 import authHeader from '../services/authHeader';
+
 
 function TimerManager() {
   const [selectedTimer, setSelectedTimer] = useState(null);
   const [tags, setTags] = useState([]);
-  const [timersWithTags, setTimersWithTags] = useState([]);
+  const [timers, setTimers] = useState([]);
+  const [statsKey, setStatsKey] = useState(0); // key for forcing stats refresh
 
   const fetchData = async () => {
     const [tagRes, timerRes] = await Promise.all([
       taskApi.get('/tags', { headers: authHeader() }),
       timerApi.get('/timers', { headers: authHeader() })
     ]);
-
-    const tags = tagRes.data;
-    const timers = timerRes.data;
-
-    const merged = timers.map(timer => ({
-      ...timer,
-      tags: tags.filter(tag => tag.timerIds.includes(timer.id))
-    }));
-
-    setTags(tags);
-    setTimersWithTags(merged);
+    setTags(tagRes.data);
+    setTimers(timerRes.data);
   };
 
   useEffect(() => {
     fetchData();
   }, []);
 
+  const refreshStats = () => {
+    setStatsKey(prev => prev + 1);
+  };
+
   return (
     <div>
       <h1>Pomodoro Dashboard</h1>
-
-      <TagsManager tags={tags} onTagsChange={fetchData} />
-
       <TimerList
         onSelect={setSelectedTimer}
-        allTags={tags}
-        timers={timersWithTags}
+        timers={timers}
         onDataChanged={fetchData}
       />
-
-      {selectedTimer && <Session timer={selectedTimer} />}
+      {selectedTimer && (
+        <Session
+          timer={selectedTimer}
+          onCancel={() => setSelectedTimer(null)}
+          onStatsUpdate={refreshStats} 
+        />
+      )}
+      <SessionStats key={statsKey} />
+      <TagsManager tags={tags} onTagsChange={fetchData} />
+      <TasksManager />
     </div>
   );
 }

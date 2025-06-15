@@ -5,7 +5,6 @@ const cors = require("cors");
 require("./models/index"); // mongoDB
 const taskRoutes = require("./routes/task.routes");
 const tagRoutes = require("./routes/tag.routes");
-const categoryRoutes = require("./routes/category.routes");
 const errorHandler = require("./middleware/errorHandler");
 
 const app = express();
@@ -20,7 +19,6 @@ app.use(rateLimit({
 
 app.use("/api/tasks", taskRoutes);
 app.use("/api/tags", tagRoutes);
-app.use("/api/categories", categoryRoutes);
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 4002;

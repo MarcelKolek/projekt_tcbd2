@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { timerApi, taskApi } from '../services/api';
+import React, { useState } from 'react';
+import { timerApi } from '../services/api';
 import authHeader from '../services/authHeader';
 
-function TimerList({ onSelect, allTags, timers, onDataChanged }) {
-  const [selectedTagFilter, setSelectedTagFilter] = useState(null);
+function TimerList({ onSelect, timers, onDataChanged }) {
   const [newTimer, setNewTimer] = useState({ workTime: '', breakTime: '', cycles: '', description: '' });
-  const [selectedTags, setSelectedTags] = useState([]);
   const [editingId, setEditingId] = useState(null);
+  const [filterDate, setFilterDate] = useState('');
+  const [descriptionQuery, setDescriptionQuery] = useState('');
+  const [sortOrder, setSortOrder] = useState('desc');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,8 +25,7 @@ function TimerList({ onSelect, allTags, timers, onDataChanged }) {
       workTime,
       breakTime,
       cycles,
-      description: newTimer.description,
-      tagIds: selectedTags
+      description: newTimer.description
     };
 
     if (editingId) {
@@ -36,8 +36,7 @@ function TimerList({ onSelect, allTags, timers, onDataChanged }) {
     }
 
     setNewTimer({ workTime: '', breakTime: '', cycles: '', description: '' });
-    setSelectedTags([]);
-    onDataChanged(); // refetch timers + tags
+    onDataChanged();
   };
 
   const handleEdit = (timer) => {
@@ -47,18 +46,34 @@ function TimerList({ onSelect, allTags, timers, onDataChanged }) {
       cycles: timer.cycles,
       description: timer.description
     });
-    setSelectedTags(timer.tags?.map(tag => tag._id) || []);
     setEditingId(timer.id);
   };
 
   const handleDelete = async (id) => {
     await timerApi.delete(`/timers/${id}`, { headers: authHeader() });
-    onDataChanged(); // refetch
+    onDataChanged();
   };
 
-  const filteredTimers = selectedTagFilter
-    ? timers.filter(t => t.tags.some(tag => tag._id === selectedTagFilter))
-    : timers;
+  const toggleSortOrder = () => {
+    setSortOrder(prev => (prev === 'asc' ? 'desc' : 'asc'));
+  };
+
+  const filteredTimers = timers
+    .filter(t => {
+      if (filterDate) {
+        const timerDate = new Date(t.createdAt).toISOString().slice(0, 10);
+        if (timerDate !== filterDate) return false;
+      }
+      if (descriptionQuery.trim()) {
+        if (!t.description?.toLowerCase().includes(descriptionQuery.toLowerCase())) return false;
+      }
+      return true;
+    })
+    .sort((a, b) => {
+      const timeA = new Date(a.createdAt).getTime();
+      const timeB = new Date(b.createdAt).getTime();
+      return sortOrder === 'asc' ? timeA - timeB : timeB - timeA;
+    });
 
   return (
     <div>
@@ -73,49 +88,44 @@ function TimerList({ onSelect, allTags, timers, onDataChanged }) {
         <input placeholder="Description" value={newTimer.description}
           onChange={e => setNewTimer({ ...newTimer, description: e.target.value })} />
 
-        <div>
-          <label>Tags:</label>
-          {allTags.map(tag => (
-            <label key={tag._id} style={{ marginRight: '10px' }}>
-              <input
-                type="checkbox"
-                checked={selectedTags.includes(tag._id)}
-                onChange={() =>
-                  setSelectedTags(prev =>
-                    prev.includes(tag._id) ? prev.filter(id => id !== tag._id) : [...prev, tag._id]
-                  )
-                }
-              />
-              {tag.name}
-            </label>
-          ))}
-        </div>
-
         <button type="submit">{editingId ? "Update Timer" : "Create Timer"}</button>
         {editingId && <button type="button" onClick={() => setEditingId(null)}>Cancel</button>}
       </form>
 
       <div style={{ marginTop: '20px' }}>
-        <h3>Filter by Tag</h3>
-        {allTags.map(tag => (
-          <button
-            key={tag._id}
-            onClick={() => setSelectedTagFilter(tag._id)}
-            style={{ marginRight: '10px', fontWeight: tag._id === selectedTagFilter ? 'bold' : 'normal' }}
-          >
-            {tag.name}
+        <h3>Filters</h3>
+        <div style={{ marginBottom: '10px' }}>
+          <label>Date: </label>
+          <input
+            type="date"
+            value={filterDate}
+            onChange={e => setFilterDate(e.target.value)}
+          />
+          <button onClick={() => setFilterDate('')}>Clear</button>
+        </div>
+        <div style={{ marginBottom: '10px' }}>
+          <label>Description Contains: </label>
+          <input
+            type="text"
+            placeholder="Search..."
+            value={descriptionQuery}
+            onChange={e => setDescriptionQuery(e.target.value)}
+          />
+        </div>
+        <div>
+          <button onClick={toggleSortOrder}>
+            Sort by Date: {sortOrder === 'asc' ? 'Oldest First' : 'Newest First'}
           </button>
-        ))}
-        <button onClick={() => setSelectedTagFilter(null)}>Clear Filter</button>
+        </div>
       </div>
 
-      <ul>
+      <ul style={{ marginTop: '20px' }}>
         {filteredTimers.map(t => (
           <li key={t.id}>
             <span onClick={() => onSelect(t)} style={{ cursor: 'pointer', fontWeight: 'bold' }}>
               {t.description} - {t.workTime}min / {t.breakTime}min - {t.cycles} cycles
             </span>
-            <div>Tags: {t.tags?.map(tag => tag.name).join(', ') || 'None'}</div>
+            <div style={{ fontSize: '0.9em' }}>Created: {new Date(t.createdAt).toLocaleDateString()}</div>
             <button onClick={() => handleEdit(t)}>Edit</button>
             <button onClick={() => handleDelete(t.id)}>Delete</button>
           </li>

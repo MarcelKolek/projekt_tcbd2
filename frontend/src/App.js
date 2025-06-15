@@ -2,11 +2,7 @@ import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Login from './components/Login';
 import Register from './components/Register';
-import TimerList from './components/TimerList';
 import Session from './components/Session';
-import Stats from './components/Stats';
-import TagsManager from './components/TagsManager';
-import TasksManager from './components/TasksManager';
 import Settings from './components/Settings';
 import AdminPanel from './components/AdminPanel';
 import TimerManager from './components/TimerManager';
@@ -26,8 +22,6 @@ function App() {
         {user && <>
           <Route path="/" element={<TimerManager />} />
           <Route path="/session" element={<Session />} />
-          <Route path="/stats" element={<Stats />} />
-          <Route path="/tasks" element={<TasksManager />} />
           <Route path="/settings" element={<Settings />} />
           {user.role === 'admin' && <Route path="/admin" element={<AdminPanel />} />}
         </>}

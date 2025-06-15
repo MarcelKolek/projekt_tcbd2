@@ -6,12 +6,11 @@ module.exports = (sequelize, DataTypes) => {
     taskId: { type: DataTypes.STRING },
     startTime: { type: DataTypes.DATE },
     endTime: { type: DataTypes.DATE },
-    status: { type: DataTypes.STRING }
+    completed: { type: DataTypes.BOOLEAN, defaultValue: false }
   }, {
     indexes: [
       { fields: ['timerId'] },
-      { fields: ['userId'] },
-      { fields: ['status'] }
+      { fields: ['userId'] }
     ]
   });
   return Session;
