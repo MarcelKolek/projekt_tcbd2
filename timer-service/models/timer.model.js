@@ -5,13 +5,11 @@ module.exports = (sequelize, DataTypes) => {
     workTime: { type: DataTypes.INTEGER, allowNull: false },
     breakTime: { type: DataTypes.INTEGER, allowNull: false },
     cycles: { type: DataTypes.INTEGER, allowNull: false },
-    status: { type: DataTypes.STRING, defaultValue: "active" },
     description: { type: DataTypes.STRING },
     createdAt: { type: DataTypes.DATE, defaultValue: DataTypes.NOW }
   }, {
     indexes: [
       { fields: ['userId'] },
-      { fields: ['status'] },
       { fields: ['createdAt'] }
     ]
   });

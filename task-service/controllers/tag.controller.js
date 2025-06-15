@@ -27,3 +27,14 @@ exports.updateTag = async (req, res, next) => {
     res.status(200).send(tag);
   } catch (err) { next(err); }
 };
+
+exports.deleteTag = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const tag = await Tag.findOneAndDelete({ _id: id, userId: req.userId });
+    if (!tag) return res.status(404).send({ message: "Tag not found." });
+    res.status(200).send({ message: "Tag deleted successfully." });
+  } catch (err) {
+    next(err);
+  }
+};

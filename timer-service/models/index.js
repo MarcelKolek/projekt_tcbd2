@@ -14,8 +14,7 @@ const Timer = sequelize.define("timer", {
   workTime: DataTypes.INTEGER,
   breakTime: DataTypes.INTEGER,
   cycles: DataTypes.INTEGER,
-  description: DataTypes.STRING,
-  status: { type: DataTypes.STRING, defaultValue: "active" }
+  description: DataTypes.STRING
 });
 const Session = sequelize.define("session", {
   id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
