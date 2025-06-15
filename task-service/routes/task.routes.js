@@ -8,5 +8,7 @@ router.get("/", verifyToken, controller.getTasks);
 router.post("/", verifyToken, [body('title').notEmpty()], controller.createTask);
 router.get("/:id", verifyToken, controller.getTask);
 router.put("/:id", verifyToken, controller.updateTask);
+router.delete("/:id", verifyToken, controller.deleteTask);
+
 
 module.exports = router;

@@ -2,10 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { taskApi, timerApi } from '../services/api';
 import authHeader from '../services/authHeader';
 
-function TasksManager() {
+function TasksManager({ timers, tags, onDataChanged, onSelectTimer }) {
   const [tasks, setTasks] = useState([]);
-  const [timers, setTimers] = useState([]);
-  const [tags, setTags] = useState([]);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [selectedTimers, setSelectedTimers] = useState([]);
@@ -17,15 +15,10 @@ function TasksManager() {
   }, []);
 
   const fetchData = async () => {
-    const [tasksRes, timersRes, tagsRes] = await Promise.all([
-      taskApi.get('/tasks', { headers: authHeader() }),
-      timerApi.get('/timers', { headers: authHeader() }),
-      taskApi.get('/tags', { headers: authHeader() }),
-    ]);
-    setTasks(tasksRes.data);
-    setTimers(timersRes.data);
-    setTags(tagsRes.data);
+    const res = await taskApi.get('/tasks', { headers: authHeader() });
+    setTasks(res.data);
   };
+
 
   const handleSubmit = async () => {
     const payload = {
@@ -49,7 +42,7 @@ function TasksManager() {
     setTitle(task.title);
     setDescription(task.description);
     setSelectedTimers(task.timerIds || []);
-    setSelectedTags(task.tagIds || []);
+    setSelectedTags((task.tags || []).map(tag => tag._id));
     setEditingTaskId(task._id);
   };
 
@@ -102,7 +95,7 @@ function TasksManager() {
               onChange={() => toggleTimer(t.id)}
               disabled={!selectedTimers.includes(t.id) && selectedTimers.length >= 3}
             />
-            {t.description}
+            {t.description} ({t.workTime}m / {t.breakTime}m, {t.cycles}x)
           </label>
         ))}
       </div>
@@ -131,9 +124,27 @@ function TasksManager() {
           <li key={t._id}>
             <b>{t.title}</b>: {t.description}
             <br />
-            Timers: {t.timerIds?.join(', ') || 'None'}
+            Timers:&nbsp;
+            {t.timerIds?.length ? (
+              t.timerIds.map(id => {
+                const timer = timers.find(tm => tm.id === id);
+                return timer ? (
+                  <button
+                    key={id}
+                    onClick={() => onSelectTimer(timer)}
+                    style={{ marginRight: '8px' }}
+                  >
+                    {timer.description} ({timer.workTime}m / {timer.breakTime}m, {timer.cycles}x)
+                  </button>
+                ) : (
+                  <span key={id}>{id}</span>
+                );
+              })
+            ) : (
+              'None'
+            )}
             <br />
-            Tags: {t.tagIds?.join(', ') || 'None'}
+            Tags: {t.tags?.map(tag => tag.name).join(', ') || 'None'}
             <br />
             <button onClick={() => handleEdit(t)}>Edit</button>
             <button onClick={() => handleDelete(t._id)}>Delete</button>

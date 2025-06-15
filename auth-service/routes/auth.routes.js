@@ -18,6 +18,5 @@ router.post(
 router.get("/users", verifyToken, isAdmin, controller.getAllUsers);
 router.put("/users/:id", verifyToken, isAdmin, controller.updateUser);
 router.delete("/users/:id", verifyToken, isAdmin, controller.deleteUser);
-router.put("/preferences", verifyToken, controller.updatePreferences);
 
 module.exports = router;

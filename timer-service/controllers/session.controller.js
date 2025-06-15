@@ -1,4 +1,5 @@
 const { Session, Timer } = require("../models");
+const { Op } = require("sequelize");
 
 exports.createSession = async (req, res, next) => {
   try {
@@ -38,12 +39,18 @@ exports.updateSession = async (req, res, next) => {
   }
 };
 
-
 exports.getSessionHistory = async (req, res, next) => {
   try {
     const { timerId } = req.query;
-    const condition = { userId: req.userId };
-    if (timerId) condition.timerId = timerId;
+    const condition = {};
+
+    if (req.userRole !== 'admin') {
+      condition.userId = req.userId;
+    }
+
+    if (timerId) {
+      condition.timerId = timerId;
+    }
 
     const sessions = await Session.findAll({ where: condition });
     res.status(200).send(sessions);
@@ -54,12 +61,15 @@ exports.getSessionHistory = async (req, res, next) => {
 
 exports.getStats = async (req, res, next) => {
   try {
-    const sessions = await Session.findAll({
-      where: {
-        userId: req.userId,
-        endTime: { [require('sequelize').Op.ne]: null } // ✅ ended sessions
-      }
-    });
+    const condition = {
+      endTime: { [Op.ne]: null }
+    };
+
+    if (req.userRole !== 'admin') {
+      condition.userId = req.userId;
+    }
+
+    const sessions = await Session.findAll({ where: condition });
 
     let totalTime = 0;
     sessions.forEach(sess => {

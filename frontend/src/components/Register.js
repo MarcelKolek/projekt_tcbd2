@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { authApi } from '../services/api';
 
 function Register() {
@@ -27,6 +28,12 @@ function Register() {
           onChange={e => setPassword(e.target.value)} /><br/>
         <button type="submit">Register</button>
       </form>
+      <p>
+        Already have an account?{' '}
+        <Link to="/login">
+          Back to Login
+        </Link>
+      </p>
     </div>
   );
 }

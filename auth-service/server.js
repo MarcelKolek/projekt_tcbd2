@@ -11,17 +11,41 @@ app.use(helmet());
 app.use(express.json());
 app.use(cors());
 app.use(rateLimit({
-  windowMs: 15*60*1000,
+  windowMs: 15 * 60 * 1000,
   max: 100,
   message: "Too many requests"
 }));
 
-db.sequelize.sync();
-
-app.use("/api/auth", authRoutes);
-app.use(errorHandler);
-
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => {
-  console.log(`Auth service running on port ${PORT}`);
-});
+
+const startServer = async () => {
+  const MAX_RETRIES = 10;
+  let retries = 0;
+
+  while (retries < MAX_RETRIES) {
+    try {
+      await db.sequelize.sync();
+      console.log("✅ Database synced successfully.");
+      break;
+    } catch (err) {
+      retries++;
+      console.error(`❌ Database sync failed (attempt ${retries}/${MAX_RETRIES})`);
+      console.error(err);
+      await new Promise(res => setTimeout(res, 3000)); // wait 3s before retrying
+    }
+  }
+
+  if (retries === MAX_RETRIES) {
+    console.error("🚫 Max retries reached. Exiting.");
+    process.exit(1);
+  }
+
+  app.use("/api/auth", authRoutes);
+  app.use(errorHandler);
+
+  app.listen(PORT, () => {
+    console.log(`🚀 Auth service running on port ${PORT}`);
+  });
+};
+
+startServer();

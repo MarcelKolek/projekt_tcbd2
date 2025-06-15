@@ -17,10 +17,6 @@ module.exports = (sequelize, DataTypes) => {
     role: {
       type: DataTypes.STRING,
       defaultValue: "user"
-    },
-    preferences: {
-      type: DataTypes.JSON,
-      defaultValue: {}
     }
   }, {
     indexes: [

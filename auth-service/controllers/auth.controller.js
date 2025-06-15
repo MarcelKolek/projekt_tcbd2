@@ -19,7 +19,6 @@ exports.register = async (req, res, next) => {
       username,
       password: hashedPassword,
       role: role || "user",
-      preferences: {}
     });
     res.status(201).send({ message: "User registered successfully!" });
   } catch (err) {
@@ -54,25 +53,32 @@ exports.login = async (req, res, next) => {
 
 exports.getAllUsers = async (req, res, next) => {
   try {
-    const users = await User.findAll({ attributes: ['id','username','role','preferences'] });
+    const users = await User.findAll({ attributes: ['id','username','role'] });
     res.status(200).send(users);
   } catch (err) {
     next(err);
   }
 };
 
+
 exports.updateUser = async (req, res, next) => {
   try {
     const id = req.params.id;
-    const { role, preferences } = req.body;
+    const { username, password, role, preferences } = req.body;
     const user = await User.findByPk(id);
-    if (!user) {
-      return res.status(404).send({ message: "User not found." });
-    }
+    if (!user) return res.status(404).send({ message: "User not found." });
+
+    if (username) user.username = username;
     if (role) user.role = role;
     if (preferences) user.preferences = preferences;
+    if (password) user.password = bcrypt.hashSync(password, 8);
+
     await user.save();
-    res.status(200).send({ id: user.id, username: user.username, role: user.role });
+    res.status(200).send({
+      id: user.id,
+      username: user.username,
+      role: user.role
+    });
   } catch (err) {
     next(err);
   }
@@ -91,16 +97,3 @@ exports.deleteUser = async (req, res, next) => {
   }
 };
 
-exports.updatePreferences = async (req, res, next) => {
-  try {
-    const user = await User.findByPk(req.userId);
-    if (!user) {
-      return res.status(404).send({ message: "User not found." });
-    }
-    user.preferences = { ...user.preferences, ...req.body };
-    await user.save();
-    res.status(200).send(user.preferences);
-  } catch (err) {
-    next(err);
-  }
-};
