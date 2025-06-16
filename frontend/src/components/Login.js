@@ -20,7 +20,7 @@ function Login({ onLogin }) {
   };
 
   return (
-    <div>
+    <div className="container">
       <h2>Login</h2>
       {error && <p style={{color:'red'}}>{error}</p>}
       <form onSubmit={handleSubmit}>
@@ -28,7 +28,7 @@ function Login({ onLogin }) {
           onChange={e => setUsername(e.target.value)} /><br/>
         <input type="password" placeholder="Password" value={password}
           onChange={e => setPassword(e.target.value)} /><br/>
-        <button type="submit">Log In</button>
+        <button type="submit" className="btn">Log In</button>
       </form>
       <p>
        Don’t have an account?{' '}

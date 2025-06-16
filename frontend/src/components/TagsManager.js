@@ -12,22 +12,22 @@ const TagsManager = ({ tags, onTagsChange }) => {
   };
 
   return (
-    <div>
+    <div className="container">
       <h2>Tags</h2>
       <input placeholder="New tag" value={name} onChange={e => setName(e.target.value)} />
-      <button onClick={addTag}>Add</button>
+      <button onClick={addTag} className="btn">Add</button>
       <ul>
         {tags.map(tag => (
           <li key={tag._id}>
             {tag.name}
-            <button onClick={async () => {
+            <button className="btn" onClick={async () => {
               const newName = prompt("Edit tag name:", tag.name);
               if (newName) {
                 await taskApi.put(`/tags/${tag._id}`, { name: newName }, { headers: authHeader() });
                 onTagsChange();
               }
             }}>Edit</button>
-            <button onClick={async () => {
+            <button className="btn" onClick={async () => {
               await taskApi.delete(`/tags/${tag._id}`, { headers: authHeader() });
               onTagsChange();
             }}>Delete</button>

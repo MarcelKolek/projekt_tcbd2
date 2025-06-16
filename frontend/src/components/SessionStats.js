@@ -69,15 +69,15 @@ const SessionStats = () => {
   if (loading) return <p>Loading statistics...</p>;
 
   return (
-    <div style={{ marginTop: '20px' }}>
+    <div style={{ marginTop: '20px' }} className="container">
       <h3>Work Session Statistics</h3>
       <p><strong>Total time spent working:</strong> {formatTime(stats.totalTime)}</p>
       <p><strong>Completed sessions:</strong> {stats.completedSessions}</p>
 
-      <button onClick={downloadStats} style={{ marginRight: '10px' }}>
+      <button onClick={downloadStats} style={{ marginRight: '10px' }} className="btn">
         Download statistics
       </button>
-      <button onClick={downloadHistory}>
+      <button onClick={downloadHistory} className="btn">
         Download session history
       </button>
     </div>

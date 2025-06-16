@@ -56,7 +56,7 @@ function AdminUserList() {
     }
   };
 
-  if (error) return <div style={{ color: 'red' }}>{error}</div>;
+  if (error) return <div style={{ color: 'red' }} className="container">{error}</div>;
 
   return (
     <div>
@@ -96,15 +96,15 @@ function AdminUserList() {
             </select>
           </label>
           <br /><br />
-          <button onClick={handleUpdate}>Update</button>
-          <button onClick={() => setEditingUser(null)} style={{ marginLeft: '10px' }}>Cancel</button>
+          <button onClick={handleUpdate} className="btn">Update</button>
+          <button onClick={() => setEditingUser(null)} className="btn" style={{ marginLeft: '10px' } }>Cancel</button>
         </div>
       ) : (
         <ul>
           {users.map(user => (
             <li key={user.id}>
               {user.username} - {user.role}
-              <button onClick={() => handleEditClick(user)} style={{ marginLeft: '1rem' }}>
+              <button onClick={() => handleEditClick(user)} className="btn" style={{ marginLeft: '1rem' }}>
                 Edit
               </button>
             </li>

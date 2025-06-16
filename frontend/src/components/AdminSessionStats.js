@@ -78,15 +78,15 @@ const AdminSessionStats = () => {
   if (loading) return <p>Loading session data for all users...</p>;
 
   return (
-    <div style={{ marginTop: '30px' }}>
+    <div style={{ marginTop: '30px' }} className="container">
       <h3>Admin: All Users' Session Statistics</h3>
       <p><strong>Total time worked:</strong> {formatTime(stats.totalTime)}</p>
       <p><strong>Completed sessions:</strong> {stats.completedSessions}</p>
 
-      <button onClick={downloadStats} style={{ marginRight: '10px' }}>
+      <button onClick={downloadStats} style={{ marginRight: '10px' }} className="btn">
         Download Statistics
       </button>
-      <button onClick={downloadHistory}>
+      <button onClick={downloadHistory} className="btn">
         Download Session History
       </button>
     </div>

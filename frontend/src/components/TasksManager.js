@@ -78,7 +78,7 @@ function TasksManager({ timers, tags, onDataChanged, onSelectTimer }) {
   };
 
   return (
-    <div>
+    <div className="container">
       <h2>{editingTaskId ? "Edit Task" : "Add Task"}</h2>
       <input placeholder="Title" value={title}
         onChange={e => setTitle(e.target.value)} />
@@ -114,10 +114,10 @@ function TasksManager({ timers, tags, onDataChanged, onSelectTimer }) {
         ))}
       </div>
 
-      <button onClick={handleSubmit}>
+      <button onClick={handleSubmit} className="btn">
         {editingTaskId ? "Update Task" : "Add Task"}
       </button>
-      {editingTaskId && <button onClick={resetForm}>Cancel</button>}
+      {editingTaskId && <button onClick={resetForm} className="btn">Cancel</button>}
 
       <ul>
         {tasks.map(t => (
@@ -130,6 +130,7 @@ function TasksManager({ timers, tags, onDataChanged, onSelectTimer }) {
                 const timer = timers.find(tm => tm.id === id);
                 return timer ? (
                   <button
+                    className="btn"
                     key={id}
                     onClick={() => onSelectTimer(timer)}
                     style={{ marginRight: '8px' }}
@@ -146,8 +147,8 @@ function TasksManager({ timers, tags, onDataChanged, onSelectTimer }) {
             <br />
             Tags: {t.tags?.map(tag => tag.name).join(', ') || 'None'}
             <br />
-            <button onClick={() => handleEdit(t)}>Edit</button>
-            <button onClick={() => handleDelete(t._id)}>Delete</button>
+            <button className="btn" onClick={() => handleEdit(t)}>Edit</button>
+            <button className="btn" onClick={() => handleDelete(t._id)}>Delete</button>
           </li>
         ))}
       </ul>

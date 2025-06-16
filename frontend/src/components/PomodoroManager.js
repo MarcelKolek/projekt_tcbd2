@@ -39,9 +39,9 @@ function PomodoroManager({ onLogout }) {
   };
 
   return (
-    <div>
+    <div className="container">
       <h1>Pomodoro Dashboard</h1>
-      <button onClick={onLogout} style={{ height: '30px' }}>Logout</button>
+      <button onClick={onLogout} className="btn">Logout</button>
 
       {isAdmin ? (
         <>

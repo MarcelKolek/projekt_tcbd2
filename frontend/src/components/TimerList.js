@@ -76,7 +76,7 @@ function TimerList({ onSelect, timers, onDataChanged }) {
     });
 
   return (
-    <div>
+    <div className="container">
       <h2>{editingId ? "Edit Timer" : "Create Timer"}</h2>
       <form onSubmit={handleSubmit}>
         <input placeholder="Work Time (min)" value={newTimer.workTime}
@@ -88,8 +88,8 @@ function TimerList({ onSelect, timers, onDataChanged }) {
         <input placeholder="Description" value={newTimer.description}
           onChange={e => setNewTimer({ ...newTimer, description: e.target.value })} />
 
-        <button type="submit">{editingId ? "Update Timer" : "Create Timer"}</button>
-        {editingId && <button type="button" onClick={() => setEditingId(null)}>Cancel</button>}
+        <button type="submit" className="btn">{editingId ? "Update Timer" : "Create Timer"}</button>
+        {editingId && <button type="button" className="btn" onClick={() => setEditingId(null)}>Cancel</button>}
       </form>
 
       <div style={{ marginTop: '20px' }}>
@@ -101,7 +101,7 @@ function TimerList({ onSelect, timers, onDataChanged }) {
             value={filterDate}
             onChange={e => setFilterDate(e.target.value)}
           />
-          <button onClick={() => setFilterDate('')}>Clear</button>
+          <button className="btn" onClick={() => setFilterDate('')}>Clear</button>
         </div>
         <div style={{ marginBottom: '10px' }}>
           <label>Description Contains: </label>
@@ -113,7 +113,7 @@ function TimerList({ onSelect, timers, onDataChanged }) {
           />
         </div>
         <div>
-          <button onClick={toggleSortOrder}>
+          <button onClick={toggleSortOrder} className="btn">
             Sort by Date: {sortOrder === 'asc' ? 'Oldest First' : 'Newest First'}
           </button>
         </div>
@@ -126,8 +126,8 @@ function TimerList({ onSelect, timers, onDataChanged }) {
               {t.description} - {t.workTime}min / {t.breakTime}min - {t.cycles} cycles
             </span>
             <div style={{ fontSize: '0.9em' }}>Created: {new Date(t.createdAt).toLocaleDateString()}</div>
-            <button onClick={() => handleEdit(t)}>Edit</button>
-            <button onClick={() => handleDelete(t.id)}>Delete</button>
+            <button className="btn" onClick={() => handleEdit(t)}>Edit</button>
+            <button className="btn" onClick={() => handleDelete(t.id)}>Delete</button>
           </li>
         ))}
       </ul>

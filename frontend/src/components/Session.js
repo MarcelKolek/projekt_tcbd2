@@ -62,7 +62,6 @@ function Session({ timer, onCancel, onStatsUpdate }) {
 
     resetSession();
 
-    // Notify parent to deselect the timer
     if (onCancel) onCancel();
   };
 
@@ -123,7 +122,7 @@ function Session({ timer, onCancel, onStatsUpdate }) {
   };
 
   return (
-    <div>
+    <div className="session-container">
       <h2>Pomodoro Session</h2>
       <p><strong>Timer:</strong> {timer.description}</p>
       <p>Phase: {isWorkPhase ? 'Work' : 'Break'}</p>
@@ -131,14 +130,16 @@ function Session({ timer, onCancel, onStatsUpdate }) {
       <p>Cycles Remaining: {cyclesLeft}</p>
 
       {!isRunning ? (
-        <button onClick={startTimer}>Start</button>
+        <button onClick={startTimer} className="btn rounded-button">Start</button>
       ) : (
-        <button onClick={pauseTimer}>Pause</button>
+        <button onClick={pauseTimer} className="btn rounded-button">Pause</button>
       )}
-      <button onClick={resetSession}>Reset</button>
-      <button onClick={handleCancel} style={{ color: 'red', marginLeft: '10px' }}>Cancel</button>
+      <button onClick={resetSession} className="btn rounded-button">Reset</button>
+      <button onClick={handleCancel} style={{ color: 'red', marginLeft: '10px' }} className="btn rounded-button">Cancel</button>
     </div>
   );
 }
 
 export default Session;
+
+// Main session component styled with .session-container
