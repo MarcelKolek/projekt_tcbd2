@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: task-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: task-service
+  template:
+    metadata:
+      labels:
+        app: task-service
+    spec:
+      containers:
+        - name: task-service
+          image: task-service:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 4002
+          env:
+            - name: MONGO_HOST
+              value: mongo
+            - name: MONGO_PORT
+              value: "27017"
+            - name: MONGO_DB
+              value: pomodoro_tasks
+            - name: JWT_SECRET
+              value: super-secret-key

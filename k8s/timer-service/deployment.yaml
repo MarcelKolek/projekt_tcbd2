@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: timer-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: timer-service
+  template:
+    metadata:
+      labels:
+        app: timer-service
+    spec:
+      containers:
+        - name: timer-service
+          image: timer-service:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 4001
+          env:
+            - name: DB_HOST
+              value: postgres
+            - name: DB_USER
+              value: postgres
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+            - name: DB_NAME
+              value: pomodoro_timer
+            - name: JWT_SECRET
+              value: super-secret-key

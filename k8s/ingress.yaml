@@ -1,0 +1,39 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pomodoro-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  rules:
+    - host: pomodoro.local
+      http:
+        paths:
+          - path: /auth(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: auth-service
+                port:
+                  number: 4000
+          - path: /timer(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: timer-service
+                port:
+                  number: 4001
+          - path: /task(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: task-service
+                port:
+                  number: 4002
+          - path: /()(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 3000
