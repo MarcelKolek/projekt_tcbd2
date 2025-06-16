@@ -16,6 +16,8 @@ services:
       retries: 5
     ports:
       - "5432:5432"
+    networks:
+      - pomodoro_net
 
   auth-service:
     build: ./auth-service
@@ -30,6 +32,8 @@ services:
         condition: service_healthy
     ports:
       - "4000:4000"
+    networks:
+      - pomodoro_net
 
   timer-service:
     build: ./timer-service
@@ -44,6 +48,8 @@ services:
         condition: service_healthy
     ports:
       - "4001:4001"
+    networks:
+      - pomodoro_net
 
   task-service:
     build: ./task-service
@@ -56,6 +62,8 @@ services:
       - mongo
     ports:
       - "4002:4002"
+    networks:
+      - pomodoro_net
 
   frontend:
     build: ./frontend
@@ -65,12 +73,20 @@ services:
       - REACT_APP_TASK_URL=http://localhost:4002/api
     ports:
       - "3000:3000"
+    networks:
+      - pomodoro_net
 
   mongo:
     image: mongo:6
     ports:
       - "27017:27017"
+    networks:
+      - pomodoro_net
 
 volumes:
   postgres_data:
   mongo_data:
+
+networks:
+  pomodoro_net:
+    driver: bridge
